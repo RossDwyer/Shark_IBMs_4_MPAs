@@ -2,17 +2,6 @@
 # Shark MPA model version 5.02 by Ross Dwyer @ Nils Krueck, 30 Sep 2019 #
 ############################################################
 
-# in contrast to v1 this version can calculate exposure also based on movement probabilities
-# which is initiated by setting probs.per.ind to 1
-# 
-# 4.01 vs. 4.02: - fixed location of individuals at BRUVs according to movement profile
-#                - included option to decrease resolution and speed up computation time 
-#                - double checking cumulative probability 
-
-#4.05 vs 4.04 - added results folder definitiion foldr
-#5.01 vs 4.05 - fix bug where species dispersal probabilities not erased prevvious species dispersal probabilities
-#5.02 vs 5.01 - add site specific dispersal data
-
 
 fsharkABM_v502 <- function(bruvdat,
                       movedat,
@@ -31,25 +20,7 @@ fsharkABM_v502 <- function(bruvdat,
                       mean.max.extent = 1, # use mean of max daily dispersal instead of max of max
                       resolution = 1,
                       resfolder = 'results') # resolution of modelling environment in m
-{ # calculate movement probabilities per individual)
-  
-  # resolution = 1
-  # bruvdat = maxndata_NS
-  # movedat = maxddata
-  # dispdat_limit=7
-  # abundancecat = 2 #1,2,3 (same, highlow, highmediumlow)
-  # speciesToSimulate = 7   #speciesToSimulate = c(1,2,3,6,7) # 1 whitetip, 2 blacktip, 3 grey reef shark, 6 caribbean reef, 7 nurse
-  # rBRUVcatchment = 400/resolution # radius of BRUV plume catchment area: 200,400,600
-  # years = 25 # lifetime over which mortality is assessed
-  # mortRate = c("pMortsInst") # "pMorts","pMortsInst"
-  # save.results = 1 # save all results
-  # plot.example = 0 # plot example mpa scenario to validate modelling procedure
-  # plot.results = 1 # plot key mortality outcomes and surviving individuals
-  # save.plots = 1 # save all plots to png file - not showing then
-  # maxd.per.ind = 1 # calculate max travel distance per individual at any day
-  # probs.per.ind = 0
-  # nreplicates = 10 # number of replicate simulations per species, location and MPA size
-  # #
+{ 
   # Modelling parameters
   
   # Removes individuals with fewer than X days of mobements
