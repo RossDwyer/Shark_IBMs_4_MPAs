@@ -1,22 +1,6 @@
 ############################################################
-# Shark MPA model version 5.02 by Ross Dwyer, 30 Sep 2019 #
+# Shark MPA model version 6.01 by Ross Dwyer, 26 Nov 2019 #
 ############################################################
-
-# in contrast to v1 this version can calculate exposure also based on movement probabilities
-# which is initiated by setting probs.per.ind to 1
-# 
-# 4.01 vs. 4.02: - fixed location of individuals at BRUVs according to movement profile
-#                - included option to decrease resolution and 
-
-# 4.04 vs 4.05 - Added capacity to define write folder name and location
-#              - Bring in Vinay's day, week, months, year, month, 
-
-# 4.05 vs 5.01- fixed bug where rewriting species dispersal profiles on grey reef sharks 7/05/2019
-#             - added histogram plot of different species dispersal capacity
-
-# 5.01 vs 5.02- edits following R1 @ Current Biology
-#             - added site specific data for BRS and GRS
-
 
 rm(list = ls()) # delete parameters in the workspace
 
@@ -26,17 +10,10 @@ library(stringr)
 
 # load data
 paste('Need to specifiy datadir - wherever you place the folder')
-#datadir <-  paste0('C:/Users/uqnkruec_local/Dropbox/Papers/Shark MPAs/', version,'/')
-#datadir <- #paste0('C:/Users/weizenkeim/Dropbox/Papers/Shark MPAs/', version,'/')
-#datadir <- paste0('E:/OneDrive/Australia/SharkRay MPAs/Agent based models/', versionfolder,'/')
-#datadir <- paste0('C:/Users/uqnkruec_local/Dropbox/Papers/Shark MPAs/', versionfolder ,'/')
-#setwd(datadir)
+
 datadir <- ''
 
-#maxndata <- read.csv(paste0(datadir, "maxndata.csv")) # maxndata2.csv - added Caribbean Species and Removed Location Classifications
-#maxddata <- read.csv(paste0(datadir, "maxddata.csv"))
-
-# Read in Vinay's new dispersal dataset which has different timeframes
+# Read in dispersal dataset which has different timeframes
 Dispersal_Timescales <- readRDS("2018-11-01_Dispersal_Timescales.RDS") # 
 TagMData <- read.csv("2019-09-18_TagMetadata_installations.csv") # 
 
@@ -79,28 +56,6 @@ maxddata.df$common_name <- factor(maxddata.df$common_name ,c("Whitetip Reef Shar
                                                              "Caribbean Reef Shark",
                                                              "Nurse Shark"))
 
-# Plot species histograms of dispersal distances under different temporal periods
-#spec.dist.hist <- ggplot(maxddata.df, 
-#                         aes(max.dispersal_km, fill = common_name)) + 
-#  geom_histogram(binwidth = 5) + 
-#  xlab("Maximum dispersal distance (km)")+
-#  ylab("Number of observations")+
-#  facet_wrap(common_name~Ftime,nrow=5, scales = "free") +
-#  theme_classic(base_size = 13) + 
-#  labs(linetype = "F")+
-#  theme(legend.position="none",
-#        axis.text.x = element_text(color="black"),
-#        axis.text.y = element_text(color="black"),
-#        strip.background = element_blank(),
-        #strip.placement = "inside",
-#        strip.text=element_text(vjust=-1),
-#        panel.background = element_blank()) 
-
-#spec.dist.hist
-# Save the plot
-#ggsave(paste0(datadir,"/Images/Species dispersal histograms.png"), spec.dist.hist)
-
-
 ####
 
 ### This is where you set the temporal dataset and folder for the modelling
@@ -109,6 +64,7 @@ maxddata.df$common_name <- factor(maxddata.df$common_name ,c("Whitetip Reef Shar
 # maxddata <- maxddata.d
 # resfoldername <- 'Ross/results/day' # Which folder it saves to
 
+# Use the weekly dataset
 maxddata <- maxddata.w
 resfoldername <- 'Ross/results/week' # Which folder it saves to
 
@@ -142,9 +98,6 @@ maxndata2[[3]] <- maxndata_GRS
 maxndata2[[6]] <- maxndata_CRS
 maxndata2[[7]] <- maxndata_NS
 
-#setwd(paste0(datadir, 'Nils/'))
-
-#source('Ross/fsharkABM_v404.R')
 source('Ross/fsharkABM_v502.R')
 
 # One species at a time
@@ -153,15 +106,13 @@ probsperind <- 1
 replicates <- 1000
 ddata <- maxddata
 
-
-
 #### Run the model for single species and all sites
 
 # Whitetip
 fsharkABM_v502(bruvdat = maxndata2[[1]],
                movedat = ddata,
                abundancecat=2,
-               speciesToSimulate = 1,  #speciesToSimulate = c(1,2,3,6,7) # 1 whitetip, 2 blacktip, 3 grey reef shark, 6 caribbean reef, 7 nurse shark 
+               speciesToSimulate = 1,  
                nreplicates = replicates,
                probs.per.ind = probsperind,
                mean.max.extent = meanmaxextent,
@@ -172,7 +123,7 @@ fsharkABM_v502(bruvdat = maxndata2[[1]],
 fsharkABM_v502(bruvdat = maxndata2[[2]],
                movedat = ddata,
                abundancecat=2,
-               speciesToSimulate = 1,  #speciesToSimulate = c(1,2,3,6,7) # 1 whitetip, 2 blacktip, 3 grey reef shark, 6 caribbean reef, 7 nurse shark 
+               speciesToSimulate = 1, 
                nreplicates = replicates,
                probs.per.ind = probsperind,
                mean.max.extent = meanmaxextent,
@@ -183,7 +134,7 @@ fsharkABM_v502(bruvdat = maxndata2[[2]],
 fsharkABM_v502(bruvdat = maxndata2[[3]],
                movedat = ddata,
                abundancecat=2,
-               speciesToSimulate = 1,  #speciesToSimulate = c(1,2,3,6,7) # 1 whitetip, 2 blacktip, 3 grey reef shark, 6 caribbean reef, 7 nurse shark 
+               speciesToSimulate = 1, 
                nreplicates = replicates,
                probs.per.ind = probsperind,
                mean.max.extent = meanmaxextent,
@@ -194,7 +145,7 @@ fsharkABM_v502(bruvdat = maxndata2[[3]],
 fsharkABM_v502(bruvdat = maxndata2[[6]],
                movedat = ddata,
                abundancecat=2,
-               speciesToSimulate = 1,  #speciesToSimulate = c(1,2,3,6,7) # 1 whitetip, 2 blacktip, 3 grey reef shark, 6 caribbean reef, 7 nurse shark 
+               speciesToSimulate = 1, 
                nreplicates = replicates,
                probs.per.ind = probsperind,
                mean.max.extent = meanmaxextent,
@@ -205,44 +156,12 @@ fsharkABM_v502(bruvdat = maxndata2[[6]],
 fsharkABM_v502(bruvdat = maxndata2[[7]],
                movedat = ddata,
                abundancecat=2,
-               speciesToSimulate = 1,  #speciesToSimulate = c(1,2,3,6,7) # 1 whitetip, 2 blacktip, 3 grey reef shark, 6 caribbean reef, 7 nurse shark 
+               speciesToSimulate = 1,  
                nreplicates = replicates,
                probs.per.ind = probsperind,
                mean.max.extent = meanmaxextent,
                resolution = 1,
                resfolder=resfoldername)
-# 
-# 
-# library(parallel)
-# 
-# # Use the detectCores() function to find the number of cores in system
-# no_cores <- detectCores()
-# 
-# # Setup cluster
-# clust <- makeCluster(no_cores) #This line will take 
-# 
-# #To ensure function and data are sent to the workers, export the names directly
-# clusterExport(clust, list("fsharkABM","maxndata2","maxddata","datadir"))
-# 
-# #The parallel version of lapply() is parLapply() and needs an additional cluster argument.
-# parLapply(clust,c(2), function(x) fsharkABM(bruvdat = maxndata2[[x]],#1,2,3,6,7
-#                                                   movedat = maxddata,
-#                                                   abundancecat=2,
-#                                                   speciesToSimulate = x,  #speciesToSimulate = c(1,2,3,6,7) # 1 whitetip, 2 blacktip, 3 grey reef shark, 6 caribbean reef, 7 nurse shark 
-#                                                   rBRUVcatchment = 400, # radius of BRUV plume catchment area: 200,400,600 
-#                                                   nreplicates = 1000,
-#                                                   probs.per.ind = 0,
-#                                                   years = 25, # lifetime over which mortality is assessed
-#                                                   mortRate = c("pMortsInst"), # "pMorts","pMortsInst"
-#                                                   save.results = 1, # save all results
-#                                                   plot.example = 0, # plot example mpa scenario to validate modelling procedure
-#                                                   plot.results = 1, # plot key mortality outcomes and surviving individuals
-#                                                   save.plots = 1, # save all plots to png file - not showing then
-#                                                   maxd.per.ind = 1, # calculate max travel distance per individual at any day
-#                                                   probs.per.ind = 1,
-#                                                   nreplicates = 10)) #This output is a vector)
-# 
-# 
 
 #########################################
 
@@ -250,19 +169,20 @@ fsharkABM_v502(bruvdat = maxndata2[[7]],
 
 unique(ddata$installation) #Brazil   Belize   Ningaloo Rowley   Florida  Heron    FNQ      Scott  
 
-ddata_Nin <- ddata %>%
+ddataGNS <- ddata %>% filter(common_name %in% c("Grey Reef Shark")) 
+
+ddata_Nin <- ddataGNS %>%
   filter(installation=='Ningaloo')
-ddata_Row <- ddata %>%
+ddata_Row <- ddataGNS %>%
   filter(installation=='Rowley')
-ddata_Her <- ddata %>%
+ddata_Her <- ddataGNS %>%
   filter(installation=='Heron')
-ddata_Fnq <- ddata %>%
+ddata_Fnq <- ddataGNS %>%
   filter(installation=='FNQ')
-ddata_Sco <- ddata %>%
+ddata_Sco <- ddataGNS %>%
   filter(installation=='Scott')
 
-ddata_site <- ddata %>%
-  #filter(common_name %in% c("Blacktip Reef Shark","Grey Reef Shark")) %>%
+ddata_site <- ddataGNS %>%
   group_by(tag_id,common_name,installation) %>%
   summarise(array_area = mean(array_area_m2),
             length_mm=mean(length_mm),
@@ -282,13 +202,12 @@ ddata_site %>%
             nsharks = n_distinct(tag_id))
 
 ###
-## First Grey Reef sharks
 
 # Grey @ Ningaloo
 fsharkABM_v502_sites(bruvdat = maxndata2[[3]],
                      movedat = ddata_Nin,
                      abundancecat=2,
-                     speciesToSimulate = 1,  #speciesToSimulate = c(1,2,3,6,7) # 1 whitetip, 2 blacktip, 3 grey reef shark, 6 caribbean reef, 7 nurse shark 
+                     speciesToSimulate = 1,  
                      nreplicates = 1000,
                      probs.per.ind = probsperind,
                      mean.max.extent = meanmaxextent,
@@ -300,7 +219,7 @@ fsharkABM_v502_sites(bruvdat = maxndata2[[3]],
 fsharkABM_v502_sites(bruvdat = maxndata2[[3]],
                      movedat = ddata_Row,
                      abundancecat=2,
-                     speciesToSimulate = 1,  #speciesToSimulate = c(1,2,3,6,7) # 1 whitetip, 2 blacktip, 3 grey reef shark, 6 caribbean reef, 7 nurse shark 
+                     speciesToSimulate = 1,  
                      nreplicates = 1000,
                      probs.per.ind = probsperind,
                      mean.max.extent = meanmaxextent,
@@ -311,7 +230,7 @@ fsharkABM_v502_sites(bruvdat = maxndata2[[3]],
 fsharkABM_v502_sites(bruvdat = maxndata2[[3]],
                      movedat = ddata_Her,
                      abundancecat=2,
-                     speciesToSimulate = 1,  #speciesToSimulate = c(1,2,3,6,7) # 1 whitetip, 2 blacktip, 3 grey reef shark, 6 caribbean reef, 7 nurse shark 
+                     speciesToSimulate = 1, 
                      nreplicates = 1000,
                      probs.per.ind = probsperind,
                      mean.max.extent = meanmaxextent,
@@ -322,7 +241,7 @@ fsharkABM_v502_sites(bruvdat = maxndata2[[3]],
 fsharkABM_v502_sites(bruvdat = maxndata2[[3]],
                      movedat = ddata_Fnq,
                      abundancecat=2,
-                     speciesToSimulate = 1,  #speciesToSimulate = c(1,2,3,6,7) # 1 whitetip, 2 blacktip, 3 grey reef shark, 6 caribbean reef, 7 nurse shark 
+                     speciesToSimulate = 1,  
                      nreplicates = 1000,
                      probs.per.ind = probsperind,
                      mean.max.extent = meanmaxextent,
@@ -333,65 +252,7 @@ fsharkABM_v502_sites(bruvdat = maxndata2[[3]],
 fsharkABM_v502_sites(bruvdat = maxndata2[[3]],
                      movedat = ddata_Sco,
                      abundancecat=2,
-                     speciesToSimulate = 1,  #speciesToSimulate = c(1,2,3,6,7) # 1 whitetip, 2 blacktip, 3 grey reef shark, 6 caribbean reef, 7 nurse shark 
-                     nreplicates = 1000,
-                     probs.per.ind = probsperind,
-                     mean.max.extent = meanmaxextent,
-                     resolution = 1,
-                     resfolder=paste0(resfoldername,"/Scott"))
-
-###
-## Second Blacktip Reef sharks
-# Blacktip @ Ningaloo
-fsharkABM_v502_sites(bruvdat = maxndata2[[2]],
-                     movedat = ddata_Nin,
-                     abundancecat=2,
-                     speciesToSimulate = 1,  #speciesToSimulate = c(1,2,3,6,7) # 1 whitetip, 2 blacktip, 3 grey reef shark, 6 caribbean reef, 7 nurse shark 
-                     nreplicates = 1000,
-                     probs.per.ind = probsperind,
-                     mean.max.extent = meanmaxextent,
-                     resolution = 1,
-                     resfolder=paste0(resfoldername,"/Ningaloo"))
-
-
-# Blacktip @ Rowley
-fsharkABM_v502_sites(bruvdat = maxndata2[[2]],
-                     movedat = ddata_Row,
-                     abundancecat=2,
-                     speciesToSimulate = 1,  #speciesToSimulate = c(1,2,3,6,7) # 1 whitetip, 2 blacktip, 3 grey reef shark, 6 caribbean reef, 7 nurse shark 
-                     nreplicates = 1000,
-                     probs.per.ind = probsperind,
-                     mean.max.extent = meanmaxextent,
-                     resolution = 1,
-                     resfolder=paste0(resfoldername,"/Rowley"))
-
-# Blacktip @ Heron
-fsharkABM_v502_sites(bruvdat = maxndata2[[2]],
-                     movedat = ddata_Her,
-                     abundancecat=2,
-                     speciesToSimulate = 1,  #speciesToSimulate = c(1,2,3,6,7) # 1 whitetip, 2 blacktip, 3 grey reef shark, 6 caribbean reef, 7 nurse shark 
-                     nreplicates = 1000,
-                     probs.per.ind = probsperind,
-                     mean.max.extent = meanmaxextent,
-                     resolution = 1,
-                     resfolder=paste0(resfoldername,"/Heron"))
-
-# Blacktip @ FNQ
-fsharkABM_v502_sites(bruvdat = maxndata2[[2]],
-                     movedat = ddata_Fnq,
-                     abundancecat=2,
-                     speciesToSimulate = 1,  #speciesToSimulate = c(1,2,3,6,7) # 1 whitetip, 2 blacktip, 3 grey reef shark, 6 caribbean reef, 7 nurse shark 
-                     nreplicates = 1000,
-                     probs.per.ind = probsperind,
-                     mean.max.extent = meanmaxextent,
-                     resolution = 1,
-                     resfolder=paste0(resfoldername,"/FNQ"))
-
-# Blacktip @ Scott
-fsharkABM_v502_sites(bruvdat = maxndata2[[2]],
-                     movedat = ddata_Sco,
-                     abundancecat=2,
-                     speciesToSimulate = 1,  #speciesToSimulate = c(1,2,3,6,7) # 1 whitetip, 2 blacktip, 3 grey reef shark, 6 caribbean reef, 7 nurse shark 
+                     speciesToSimulate = 1, 
                      nreplicates = 1000,
                      probs.per.ind = probsperind,
                      mean.max.extent = meanmaxextent,
